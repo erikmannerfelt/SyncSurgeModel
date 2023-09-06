@@ -31,7 +31,11 @@ def show_multiple_surges(
 ):
     rng: np.random.Generator = np.random.default_rng(random_state)
 
-    periods = rng.normal(np.mean([min_period, max_period]), scale=max_period - min_period, size=n_glaciers)
+    all_periods = np.linspace(min_period, max_period, 100000)
+
+    periods = rng.choice(all_periods, size=n_glaciers)
+    #periods = rng.normal(np.mean([min_period, max_period]), scale=max_period - min_period, size=n_glaciers)
+
     random_phases = rng.normal(size=n_glaciers) * periods
 
     shape = (3, 2)
@@ -62,18 +66,19 @@ def show_multiple_surges(
             plt.plot(times, cycle)
 
         plt.title(f"{n_glaciers} glaciers at the same time\n({scenario})")
+        # Find out where the test time is in the cycle and return the remainder
+        time_in_cycle = (times[:, None] - phases[None, :]) % periods[None, :]
 
-        all_cycles = pd.Series(np.ravel(cycles), np.repeat(times, len(cycles)))
-        all_cycles = (all_cycles > 0.9).astype(float)
+        # If the time is either near the beginning of a cycle or near the end, it's surging
+        sync_threshold = 10
+        is_surging = np.min([time_in_cycle, periods[None, :] - time_in_cycle], axis=0) < (sync_threshold)
 
-        all_cycles = all_cycles.groupby(all_cycles.index.astype(int)).sum()
-
-        sync_time = 10
-        rolling = all_cycles.rolling(sync_time, min_periods=1).sum()
+        n_surges = np.count_nonzero(is_surging, axis=1)
 
         plt.subplot2grid(shape, ( i + 1, 1))
-        plt.title(f"N concurrent surges (<{sync_time} yrs)\n({scenario})")
-        plt.bar(rolling.index, rolling, width=1)
+        plt.title(f"N concurrent surges (<{sync_threshold} yrs)\n({scenario})")
+        plt.fill_between(times, n_surges)
+        plt.plot(times, n_surges)
 
     out_path = Path("figures/multi_surge_example.jpg")
     out_path.parent.mkdir(exist_ok=True)
