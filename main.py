@@ -6,12 +6,12 @@ from pathlib import Path
 def generate_test_cases(
     n_glaciers: int,
     n_iters: int,
-    min_cycle: float,
-    max_cycle: float,
+    min_period: float,
+    max_period: float,
     random_state: int | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """
-    Generate (pseudo-)random test cases of surge cycles and phases.
+    Generate (pseudo-)random test cases of surge periodicities and phases.
 
     The test cases are not drawn from a normal distribution but are (supposed to be) completely random.
 
@@ -21,16 +21,16 @@ def generate_test_cases(
         The number of glaciers to generate test cases for (for each iteration).
     n_iters
         The number of random cases to generate for each glacier.
-    min_cycle
-        The minimum bound of randomly generated surge cycles.
-    max_cycle
-        The maximum bound of randomly generated surge cycles.
+    min_period
+        The minimum bound of randomly generated surge periodicities.
+    max_period
+        The maximum bound of randomly generated surge periodicities.
     random_state
         Optional. The random state of the random number generator.
 
     Returns
     -------
-    A tuple of (phases, cycles).
+    A tuple of (phases, periods).
 
     Each array is a two-dimensional array:
         First dimension: Each glacier
@@ -40,7 +40,7 @@ def generate_test_cases(
 
     # Initialize empty lists that will be filled up with random values for each glacier
     phases = []
-    cycles = []
+    periods = []
 
     for _ in range(n_glaciers):
 
@@ -48,26 +48,26 @@ def generate_test_cases(
         # These will be shuffled and act as different test cases
         phase = np.linspace(0, 1, n_iters)
 
-        # Generate cycles between the min and max. These will be shuffled
-        cycle = np.linspace(min_cycle, max_cycle, n_iters)
+        # Generate periodicities between the min and max. These will be shuffled
+        period = np.linspace(min_period, max_period, n_iters)
 
         # Shuffle both arrays
-        for arr in (phase, cycle):
+        for arr in (phase, period):
             rng.shuffle(arr)
 
         # Convert the phase from a fraction of a cycle to an actual value in yrs
-        phase *= cycle
+        phase *= period
 
         phases.append(phase)
-        cycles.append(cycle)
+        periods.append(period)
 
     phases = np.vstack(phases)
-    cycles = np.vstack(cycles)
+    periods = np.vstack(periods)
 
-    return phases, cycles
+    return phases, periods
 
 
-def count_surges(phases: np.ndarray, cycles: np.ndarray, test_year: float, sync_threshold: float) -> np.ndarray:
+def count_surges(phases: np.ndarray, periods: np.ndarray, test_year: float, sync_threshold: float) -> np.ndarray:
     """
     Count the amount of surges that should occur at a given year within a given acceptable range.
 
@@ -75,18 +75,18 @@ def count_surges(phases: np.ndarray, cycles: np.ndarray, test_year: float, sync_
     ----------
     phases
         The surge phases for every glacier. See `generate_test_cases` for the expected shape.
-    cycles
-        The surge cycles for every glacier. See `generate_test_cases` for the expected shape.
+    periods
+        The surge periodicities for every glacier. See `generate_test_cases` for the expected shape.
     test_year
         The year to evaluate how many surges occur on.
     sync_threshold
         The amount of years +- the test year to accept as synchronous.
     """
     # Find out where the test time is in the cycle and return the remainder
-    time_in_cycle = (test_year - phases) % cycles
+    time_in_cycle = (test_year - phases) % periods
 
     # If the time is either near the beginning of a cycle or near the end, it's surging
-    is_surging = np.min([time_in_cycle, cycles - time_in_cycle], axis=0) < (sync_threshold)
+    is_surging = np.min([time_in_cycle, periods - time_in_cycle], axis=0) < (sync_threshold)
 
     # Count the occurrences of surges for each iteration
     n_surges = np.count_nonzero(is_surging, axis=0)
@@ -97,8 +97,8 @@ def count_surges(phases: np.ndarray, cycles: np.ndarray, test_year: float, sync_
 def main(
     n_glaciers: int = 15,
     n_iters: int = int(1e6),
-    min_cycle: float = 75.0,
-    max_cycle: float = 150.0,
+    min_period: float = 75.0,
+    max_period: float = 150.0,
     random_state: int = 1,
     test_year: int = 0,
 ):
@@ -111,18 +111,18 @@ def main(
         The number of glaciers to generate test cases for (for each iteration).
     n_iters
         The number of random cases to generate for each glacier.
-    min_cycle
-        The minimum bound of randomly generated surge cycles.
-    max_cycle
-        The maximum bound of randomly generated surge cycles.
+    min_period
+        The minimum bound of randomly generated surge periodicities.
+    max_period
+        The maximum bound of randomly generated surge periodicities.
     random_state
         The random state of the random number generator.
     test_year
         The year to evaluate how many surges occur on.
  
     """
-    phases, cycles = generate_test_cases(
-        n_glaciers=n_glaciers, n_iters=n_iters, min_cycle=min_cycle, max_cycle=max_cycle, random_state=random_state
+    phases, periods = generate_test_cases(
+        n_glaciers=n_glaciers, n_iters=n_iters, min_period=min_period, max_period=max_period, random_state=random_state
     )
 
     all_in_phase = phases.copy()
@@ -135,7 +135,7 @@ def main(
         # Test lots of different thresholds to accept as synchronous and plot them all
         n_glaciers_arr = np.arange(2, n_glaciers + 1)
         for sync_threshold in [5., 10., 15., 30., 50., 75., 150.]:
-            n_surges = count_surges(phases=phase_to_use, cycles=cycles, test_year=test_year, sync_threshold=sync_threshold)
+            n_surges = count_surges(phases=phase_to_use, periods=periods, test_year=test_year, sync_threshold=sync_threshold)
 
             n_surge_likelihood = 100 * np.count_nonzero(n_surges[:, None] >= n_glaciers_arr[None, :], axis=0) / n_iters
 
