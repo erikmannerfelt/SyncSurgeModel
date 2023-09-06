@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 
 def generate_test_cases(
@@ -124,19 +125,34 @@ def main(
         n_glaciers=n_glaciers, n_iters=n_iters, min_cycle=min_cycle, max_cycle=max_cycle, random_state=random_state
     )
 
-    # Test lots of different thresholds to accept as synchronous and plot them all
-    n_glaciers_arr = np.arange(2, n_glaciers + 1)
-    for sync_threshold in [5., 10., 15., 30., 50., 75., 150.]:
-        n_surges = count_surges(phases=phases, cycles=cycles, test_year=test_year, sync_threshold=sync_threshold)
+    all_in_phase = phases.copy()
+    all_in_phase[:, :] = phases[[0], :]
 
-        n_surge_likelihood = 100 * np.count_nonzero(n_surges[:, None] >= n_glaciers_arr[None, :], axis=0) / n_iters
+    plt.figure(figsize=(8, 5))
+    for i, (scenario, phase_to_use) in enumerate([("Random phase", phases), ("Synchronized phase", all_in_phase)], start=1):
 
-        plt.plot(n_glaciers_arr, n_surge_likelihood, label=f"<{sync_threshold:.0f} yrs")
+        plt.subplot(1, 2, i)
+        # Test lots of different thresholds to accept as synchronous and plot them all
+        n_glaciers_arr = np.arange(2, n_glaciers + 1)
+        for sync_threshold in [5., 10., 15., 30., 50., 75., 150.]:
+            n_surges = count_surges(phases=phase_to_use, cycles=cycles, test_year=test_year, sync_threshold=sync_threshold)
 
-    plt.legend()
-    plt.yscale("log")
-    plt.ylabel("Likelihood percentage (%)")
-    plt.xlabel("N synchronized glaciers")
+            n_surge_likelihood = 100 * np.count_nonzero(n_surges[:, None] >= n_glaciers_arr[None, :], axis=0) / n_iters
+
+            plt.plot(n_glaciers_arr, n_surge_likelihood, label=f"<{sync_threshold:.0f} yrs")
+
+        plt.grid()
+        plt.title(scenario)
+        plt.legend()
+        plt.yscale("log")
+        plt.ylabel("Likelihood percentage (%)")
+        plt.xlabel("N synchronized glaciers")
+
+    out_path = Path("figures/surge_sync_likelihood.jpg")
+    out_path.parent.mkdir(exist_ok=True)
+    plt.tight_layout()
+    plt.savefig(out_path, dpi=600)
+
     plt.show()
 
 if __name__ == "__main__":
