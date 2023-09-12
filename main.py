@@ -95,7 +95,8 @@ def count_surges(phases: np.ndarray, periods: np.ndarray, test_year: float, sync
     
 
 def main(
-    n_glaciers: int = 15,
+    n_glaciers: int = 50,
+    max_surging_n: int = 15,
     n_iters: int = int(1e6),
     min_period: float = 75.0,
     max_period: float = 150.0,
@@ -109,6 +110,8 @@ def main(
     ----------
     n_glaciers
         The number of glaciers to generate test cases for (for each iteration).
+    max_surging_n
+        The maximum amount of syncronized surges to evaluate probabilities for.
     n_iters
         The number of random cases to generate for each glacier.
     min_period
@@ -133,7 +136,7 @@ def main(
 
         plt.subplot(1, 2, i)
         # Test the probabilities of between 2 and N glaciers
-        n_glaciers_arr = np.arange(2, n_glaciers + 1)
+        n_glaciers_arr = np.arange(2, max_surging_n + 1)
         # Test lots of different thresholds to accept as synchronous and plot them all
         for sync_threshold in [5., 10., 15., 30., 50., 75., 150.]:
             n_surges = count_surges(phases=phase_to_use, periods=periods, test_year=test_year, sync_threshold=sync_threshold)
@@ -145,7 +148,7 @@ def main(
         plt.grid()
         plt.title(scenario)
         plt.legend()
-        plt.yscale("log")
+        #plt.yscale("log")
         plt.ylabel("Likelihood percentage (%)")
         plt.xlabel("N synchronized glaciers")
 
