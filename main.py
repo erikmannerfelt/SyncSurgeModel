@@ -132,8 +132,9 @@ def main(
     for i, (scenario, phase_to_use) in enumerate([("Random phase", phases), ("Synchronized phase", all_in_phase)], start=1):
 
         plt.subplot(1, 2, i)
-        # Test lots of different thresholds to accept as synchronous and plot them all
+        # Test the probabilities of between 2 and N glaciers
         n_glaciers_arr = np.arange(2, n_glaciers + 1)
+        # Test lots of different thresholds to accept as synchronous and plot them all
         for sync_threshold in [5., 10., 15., 30., 50., 75., 150.]:
             n_surges = count_surges(phases=phase_to_use, periods=periods, test_year=test_year, sync_threshold=sync_threshold)
 
