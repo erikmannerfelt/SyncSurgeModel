@@ -68,16 +68,32 @@ def generate_test_cases(
     return phases, periods
 
 
-# generates the surge events for every glacier according to a normal distribution with mean period and variance variances, we
-# \then offset by the value contained in the vector phases
+#
 def generate_glaciers(
         phases: np.ndarray,
         periods: np.ndarray,
         variances: np.array,
-        n_surges: int = 200,
-        random_state: int | None = None
+        rng: np.random.Generator,
+        n_surges: int = 200
 ) -> np.array:
-    rng: np.random.Generator = np.random.default_rng(random_state)
+    """
+    generates the surge events for every glacier according to a normal distribution with mean period and variance,
+    we then offset by the value contained in the vector phases
+
+    Parameters
+    ----------
+    phases
+        An array that contains the expected value of the phase of the glaciers
+    periods
+        An array that contains the expected value of the periods of the glaciers
+    variances
+        An array that contains the variance od the periods of the glaciers
+    rng
+        random number generator
+    n_surges
+        number of surges simulated for each glacier (note, importanat to make sure that the nuimber is long enough to reach the test year we want to have)
+
+    """
     n_glaciers = len(periods)
     # generate standard normal distributions
     surges = rng.normal(0, 1, size=(n_glaciers, n_surges))
@@ -90,40 +106,36 @@ def generate_glaciers(
     return surges
 
 
-def count_surges(phases: np.ndarray, periods: np.ndarray, test_year: float, sync_threshold: float) -> np.ndarray:
+def count_surges(test_data: list, test_year: float, sync_threshold: float) -> np.ndarray:
     """
     Count the amount of surges that should occur at a given year within a given acceptable range.
 
     Parameters
     ----------
-    phases
-        The surge phases for every glacier. See `generate_test_cases` for the expected shape.
-    periods
-        The surge periodicities for every glacier. See `generate_test_cases` for the expected shape.
+    test_data
+        An array where each cell contains a matrix that represent the surge life for every glacier. See `generate_glaciers` for the expected shape.
     test_year
         The year to evaluate how many surges occur on.
     sync_threshold
         The amount of years +- the test year to accept as synchronous.
     """
     # Find out where the test time is in the cycle and return the remainder
-    time_in_cycle = (test_year - phases) % periods
+    n_surges = []
+    for glaciers_life in test_data:
+        is_surging = np.min(np.abs(glaciers_life - test_year),axis=0) < (sync_threshold)
+        n_surges.append(np.count_nonzero(is_surging))
 
-    # If the time is either near the beginning of a cycle or near the end, it's surging
-    is_surging = np.min([time_in_cycle, periods - time_in_cycle], axis=0) < (sync_threshold)
-
-    # Count the occurrences of surges for each iteration
-    n_surges = np.count_nonzero(is_surging, axis=0)
-
+    n_surges = np.array(n_surges)
     return n_surges
 
 
 def main(
         n_glaciers: int = 15,
-        n_iters: int = int(1e6),
-        min_period: float = 75.0,
-        max_period: float = 150.0,
+        n_iters: int = int(1e5),
+        min_period: float = 12.0,
+        max_period: float = 15.0,
         random_state: int = 1,
-        test_year: int = 0,
+        test_year: int | None = 100,
 ):
     """
     Run the main simulation.
@@ -144,9 +156,19 @@ def main(
         The year to evaluate how many surges occur on.
  
     """
+
+    rng: np.random.Generator = np.random.default_rng(random_state)
+
+    # generate phases and periods and variances, to be reviewed
+    # ---------------------------------------------------------------------
     phases, periods = generate_test_cases(
-        n_glaciers=n_glaciers, n_iters=n_iters, min_period=min_period, max_period=max_period, random_state=random_state
+        n_glaciers=n_glaciers, n_iters=1, min_period=min_period, max_period=max_period, random_state=random_state
     )
+
+    variances = rng.normal(11, scale=1, size=n_glaciers)
+    # ---------------------------------------------------------------------
+
+    test_data = [generate_glaciers(phases, periods, variances, rng, n_surges=10) for _ in range(n_iters)]
 
     all_in_phase = phases.copy()
     all_in_phase[:, :] = phases[[0], :]
@@ -160,7 +182,7 @@ def main(
         n_glaciers_arr = np.arange(2, n_glaciers + 1)
         # Test lots of different thresholds to accept as synchronous and plot them all
         for sync_threshold in [5., 10., 15., 30., 50., 75., 150.]:
-            n_surges = count_surges(phases=phase_to_use, periods=periods, test_year=test_year,
+            n_surges = count_surges(test_data=test_data, test_year=test_year,
                                     sync_threshold=sync_threshold)
 
             n_surge_likelihood = 100 * np.count_nonzero(n_surges[:, None] >= n_glaciers_arr[None, :], axis=0) / n_iters
