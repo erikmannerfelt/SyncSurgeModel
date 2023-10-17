@@ -98,8 +98,9 @@ def generate_glaciers(
     # generate standard normal distributions
     surges = rng.normal(0, 1, size=(n_glaciers, n_surges))
     # trasform standard normal distribution in normal distribution with mean periods and varianve var
-    surges = surges + np.reshape(periods, (-1, 1))
     surges = surges * np.reshape(np.sqrt(variances), (-1, 1))
+    surges = surges + np.reshape(periods, (-1, 1))
+
 
     np.cumsum(surges, axis=1, out=surges)
     surges = surges + np.reshape(phases, (-1, 1))
@@ -122,7 +123,7 @@ def count_surges(test_data: list, test_year: float, sync_threshold: float) -> np
     # Find out where the test time is in the cycle and return the remainder
     n_surges = []
     for glaciers_life in test_data:
-        is_surging = np.min(np.abs(glaciers_life - test_year),axis=0) < (sync_threshold)
+        is_surging = np.min(np.abs(glaciers_life - test_year), axis=0) < (sync_threshold)
         n_surges.append(np.count_nonzero(is_surging))
 
     n_surges = np.array(n_surges)
@@ -132,10 +133,10 @@ def count_surges(test_data: list, test_year: float, sync_threshold: float) -> np
 def main(
         n_glaciers: int = 15,
         n_iters: int = int(1e5),
-        min_period: float = 12.0,
-        max_period: float = 15.0,
+        min_period: float = 75.0,
+        max_period: float = 150.0,
         random_state: int = 1,
-        test_year: int | None = 100,
+        test_year: int | None = 2020,
 ):
     """
     Run the main simulation.
@@ -162,13 +163,13 @@ def main(
     # generate phases and periods and variances, to be reviewed
     # ---------------------------------------------------------------------
     phases, periods = generate_test_cases(
-        n_glaciers=n_glaciers, n_iters=1, min_period=min_period, max_period=max_period, random_state=random_state
+        n_glaciers=n_glaciers, n_iters=n_iters, min_period=min_period, max_period=max_period, random_state=random_state
     )
 
     variances = rng.normal(11, scale=1, size=n_glaciers)
     # ---------------------------------------------------------------------
 
-    test_data = [generate_glaciers(phases, periods, variances, rng, n_surges=10) for _ in range(n_iters)]
+    test_data = [generate_glaciers(phases[:,i], periods[:,i], variances, rng, n_surges=300) for i in range(n_iters)]
 
     all_in_phase = phases.copy()
     all_in_phase[:, :] = phases[[0], :]
@@ -192,7 +193,7 @@ def main(
         plt.grid()
         plt.title(scenario)
         plt.legend()
-        plt.yscale("log")
+        # plt.yscale("log")
         plt.ylabel("Likelihood percentage (%)")
         plt.xlabel("N synchronized glaciers")
 
