@@ -95,7 +95,8 @@ def count_surges(phases: np.ndarray, periods: np.ndarray, test_year: float, sync
     
 
 def main(
-    n_glaciers: int = 15,
+    n_glaciers: int = 50,
+    max_surging_n: int = 15,
     n_iters: int = int(1e6),
     min_period: float = 75.0,
     max_period: float = 150.0,
@@ -109,6 +110,8 @@ def main(
     ----------
     n_glaciers
         The number of glaciers to generate test cases for (for each iteration).
+    max_surging_n
+        The maximum amount of syncronized surges to evaluate probabilities for.
     n_iters
         The number of random cases to generate for each glacier.
     min_period
@@ -133,7 +136,7 @@ def main(
 
         plt.subplot(1, 2, i)
         # Test the probabilities of between 2 and N glaciers
-        n_glaciers_arr = np.arange(2, n_glaciers + 1)
+        n_glaciers_arr = np.arange(2, max_surging_n + 1)
         # Test lots of different thresholds to accept as synchronous and plot them all
         for sync_threshold in [5., 10., 15., 30., 50., 75., 150.]:
             n_surges = count_surges(phases=phase_to_use, periods=periods, test_year=test_year, sync_threshold=sync_threshold)
@@ -145,7 +148,7 @@ def main(
         plt.grid()
         plt.title(scenario)
         plt.legend()
-        plt.yscale("log")
+        #plt.yscale("log")
         plt.ylabel("Likelihood percentage (%)")
         plt.xlabel("N synchronized glaciers")
 
@@ -155,6 +158,95 @@ def main(
     plt.savefig(out_path, dpi=600)
 
     plt.show()
+
+
+def main2(
+    n_glaciers: int = 50,
+    max_surging_n: int = 17,
+    n_iters: int = int(1e4),
+    min_period: float = 75.0,
+    max_period: float = 150.0,
+    random_state: int = 1,
+    sync_threshold: float = 10.,
+):
+    phases, periods = generate_test_cases(
+        n_glaciers=n_glaciers, n_iters=n_iters, min_period=min_period, max_period=max_period, random_state=random_state
+    )
+    n_glaciers_arr = np.arange(2, n_glaciers + 1)
+    n_independent_surges = count_surges(phases=phases, periods=periods, test_year=0, sync_threshold=sync_threshold)
+
+    independent_surge_likelihood = 100 * np.count_nonzero(n_independent_surges[:, None] >= n_glaciers_arr[None, :], axis=0) / n_iters
+
+    independent_surge_spread = []
+    rng: np.random.Generator = np.random.default_rng(random_state)
+    n_evals = 200
+    for i in range(n_evals):
+        selection = rng.integers(0, n_iters, size=n_iters // n_evals)
+
+        independent_likelihood_subset = 100 * np.count_nonzero(n_independent_surges[selection, None] >= n_glaciers_arr[None, :], axis=0) / selection.size
+        independent_surge_spread.append(independent_likelihood_subset)
+        
+    independent_surge_spread = np.percentile(independent_surge_spread, [25, 75], axis=0)
+
+    times = np.linspace(0, 600, 50)
+
+    periods_repeated = np.repeat(periods[:, :, None], times.size, 2)
+    time_in_cycle = times[None, None, :] % periods_repeated
+    n_sync_surges = np.count_nonzero((time_in_cycle < sync_threshold) | ((periods_repeated - time_in_cycle) < sync_threshold), 0)
+
+    n_sync_surges_mean = np.mean(n_sync_surges, axis=0)
+    n_sync_surges_spread = np.percentile(n_sync_surges, [25, 75], axis=0)
+
+    def fmt_n_surges(data, position):
+        return int(data)
+
+    plt.figure(figsize=(8, 5))
+
+    plt.subplot(1, 2, 1)
+    plt.title("Case: Independent surges")
+    plt.fill_between(n_glaciers_arr, independent_surge_spread[0, :], independent_surge_spread[1, :], alpha=0.5)
+    plt.plot(n_glaciers_arr, independent_surge_likelihood)
+    ylim = plt.gca().get_ylim()
+    plt.vlines(max_surging_n, *ylim, color="red")
+    plt.ylabel(f"Likelihood of N surges within {int(sync_threshold * 2)} years")
+    plt.xlabel(f"Number (N) of surges within {int(sync_threshold * 2)} years")
+    plt.ylim(ylim)
+    plt.grid()
+    xlim = plt.gca().get_xlim()
+    xticks = plt.gca().get_xticks()
+    xticks = xticks[(xticks > xlim[0]) & (xticks < xlim[1])]
+    xticks = np.unique(np.r_[xticks, [max_surging_n]])
+    plt.xticks(xticks) 
+    plt.gca().get_xticklabels()[np.argwhere(xticks == max_surging_n).ravel()[0]].set_color("red")
+    #plt.text(max_surging_n + 1, np.mean(ylim), f"{max_surging_n} surge line (like observed)")
+
+    plt.subplot(1, 2, 2)
+    plt.title("Case: Phase-synchronised surges")
+    plt.fill_between(times, n_sync_surges_spread[0, :], n_sync_surges_spread[1, :], alpha=0.5)
+    plt.plot(times, n_sync_surges_mean, color="royalblue")
+
+    xlim = plt.gca().get_xlim()
+    plt.gca().yaxis.tick_right()
+    plt.gca().yaxis.set_label_position("right")
+    plt.hlines(max_surging_n, *xlim, color="red")
+    #plt.text(np.mean(xlim), max_surging_n + 1, f"{max_surging_n} surge line (like observed)", ha="center")
+    plt.xlim(xlim)
+
+    ylim = plt.gca().get_ylim()
+    yticks = plt.gca().get_yticks()
+    yticks = yticks[(yticks > ylim[0]) & (yticks < ylim[1])]
+    yticks = np.unique(np.r_[yticks, [max_surging_n]])
+    plt.yticks(yticks) 
+    plt.gca().get_yticklabels()[np.argwhere(yticks == max_surging_n).ravel()[0]].set_color("red")
+    plt.ylabel(f"Number of surges within {int(sync_threshold * 2)} years")
+    plt.xlabel("Years since synchronisation")
+    plt.grid()
+
+    plt.tight_layout()
+    plt.savefig("figures/surges_independent_vs_sync.jpg", dpi=600)
+    plt.show()
+
+    
 
 if __name__ == "__main__":
     main()
