@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
-
+import itertools
 
 def generate_test_cases(
     n_glaciers: int,
@@ -67,7 +67,50 @@ def generate_test_cases(
     return phases, periods
 
 
-def count_surges(phases: np.ndarray, periods: np.ndarray, test_year: float, sync_threshold: float) -> np.ndarray:
+def generate_test_cases_std(
+    n_glaciers: int,
+    n_iters: int,
+    mean_period: float,
+    std_period: float,
+    random_state: int | None = None,
+) -> tuple[np.ndarray, np.ndarray]:
+    """
+    Generate (pseudo-)random test cases of surge periodicities and phases.
+
+    The test cases are drawn from a normal distribution.
+
+    Parameters
+    ----------
+    n_glaciers
+        The number of glaciers to generate test cases for (for each iteration).
+    n_iters
+        The number of random cases to generate for each glacier.
+    mean_period
+        The mean of the randomly generated surge periodicities.
+    std_period
+        The standard deviation of the randomly generated surge periodicities.
+    random_state
+        Optional. The random state of the random number generator.
+
+    Returns
+    -------
+    A tuple of (phases, periods).
+
+    Each array is a two-dimensional array:
+        First dimension: Each glacier
+        Second dimension: Each iteration
+    """
+    rng: np.random.Generator = np.random.default_rng(random_state)
+
+    periods = rng.normal(mean_period, std_period, size=(n_glaciers, n_iters))
+    phases = rng.uniform(0, 1, size=(n_glaciers, n_iters))
+
+    phases *= periods
+
+    return phases, periods
+
+
+def count_surges(phases: np.ndarray, periods: np.ndarray, sync_threshold: float, test_year: float = 0.) -> np.ndarray:
     """
     Count the amount of surges that should occur at a given year within a given acceptable range.
 
@@ -77,10 +120,10 @@ def count_surges(phases: np.ndarray, periods: np.ndarray, test_year: float, sync
         The surge phases for every glacier. See `generate_test_cases` for the expected shape.
     periods
         The surge periodicities for every glacier. See `generate_test_cases` for the expected shape.
-    test_year
-        The year to evaluate how many surges occur on.
     sync_threshold
         The amount of years +- the test year to accept as synchronous.
+    test_year
+        The year to evaluate how many surges occur on.
     """
     # Find out where the test time is in the cycle and return the remainder
     time_in_cycle = (test_year - phases) % periods
@@ -92,6 +135,52 @@ def count_surges(phases: np.ndarray, periods: np.ndarray, test_year: float, sync
     n_surges = np.count_nonzero(is_surging, axis=0)
 
     return n_surges
+
+
+def calculate_surge_frequency_spread(baseline_frequency: float = 1.5, year_span: float = 10., n_tests: int = 15, n_simulations: int = 5000):
+    import tqdm
+    import tqdm.contrib.concurrent
+
+    test_mean_periods = np.linspace(50, 300, n_tests)
+    test_std_periods = np.linspace(10, 200, n_tests)
+    test_n_glaciers = np.linspace(50, 1000, n_tests, dtype=int)
+    combinations = list(itertools.product(test_mean_periods, test_std_periods, test_n_glaciers))
+
+    bins = np.linspace(0, 3, 300)
+    histograms = []
+
+    def process(combination):
+        mean_period, std_period, n_glaciers = combination        
+        phases, periods = generate_test_cases_std(n_glaciers=n_glaciers, n_iters=n_simulations, mean_period=mean_period, std_period=std_period,random_state=int(f"{mean_period:.0f}{std_period:.0f}{n_glaciers}"))
+        # Clip the periodicity to min=10 years because we've never seen anything faster than that
+        periods = np.clip(periods, a_min=10, a_max=None)
+   
+        n_surges = count_surges(phases=phases, periods=periods, sync_threshold=year_span / 2) / year_span
+
+        if abs(n_surges.mean() - baseline_frequency) > 0.25:
+            return
+
+        hist= np.histogram(n_surges, bins=bins, range=(0, 3))[0] 
+        return hist
+
+    result = tqdm.contrib.concurrent.thread_map(process, combinations)
+    histograms = [l for l in result if l is not None]
+    histogram = np.sum(histograms, axis=0)
+
+    n_over_threshold = np.sum(histogram[bins[1:] >= 3.])
+    frac_over_threshold = n_over_threshold / np.sum(histogram)
+    print(f"3: {n_over_threshold=}, {frac_over_threshold=}, n_total={np.sum(histogram)}")
+    n_over_threshold = np.sum(histogram[bins[1:] >= 2.])
+    frac_over_threshold = n_over_threshold / np.sum(histogram)
+    print(f"2: {n_over_threshold=}, {frac_over_threshold=}, n_total={np.sum(histogram)}")
+    
+    plt.bar(bins[:-1] + np.diff(bins) /2, np.sum(histograms, axis=0))
+    plt.ylabel("Simulation frequency")
+    plt.xlabel("N surges / 10 years")
+    plt.show()
+    
+
+    
     
 
 def main(
