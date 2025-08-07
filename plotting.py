@@ -27,7 +27,7 @@ def make_surge_cycle(times: np.ndarray, period: float = 100.0, phase: float = 0.
 
 
 def show_multiple_surges(
-    n_glaciers: int = 15, min_period: float = 75.0, max_period: float = 150.0, random_state: int = 1
+    n_glaciers: int = 32, min_period: float = 75.0, max_period: float = 150.0, random_state: int = 1
 ):
     rng: np.random.Generator = np.random.default_rng(random_state)
 
@@ -84,7 +84,7 @@ def show_multiple_surges(
     out_path.parent.mkdir(exist_ok=True)
     plt.tight_layout()
 
-    plt.savefig(out_path, dpi=600)
+    plt.savefig(out_path, dpi=300)
     plt.show()
 
     
