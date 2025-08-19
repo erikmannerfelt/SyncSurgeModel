@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from pathlib import Path
 import itertools
+import warnings
 
 def generate_test_cases(
     n_glaciers: int,
@@ -271,6 +272,148 @@ def calculate_synced_phase_concurrence_likelihood(baseline_frequency: float = 1.
     # plt.yscale("log")
     plt.show()
 
+
+
+def calculate_partial_synced_phase_concurrence_likelihood(baseline_frequency: float = 15, year_span: float = 10., n_tests: int = 15, n_simulations: int = 5000, n_surge_test: float = 30, show: bool = False):
+    
+    import tqdm
+    import tqdm.contrib.concurrent
+
+    baseline_frequency = baseline_frequency / 10
+    n_surge_test = n_surge_test / 10
+
+    # Generate all combinations of the test cases below
+    test_mean_periods = np.linspace(50, 300, n_tests)
+    test_std_periods = np.linspace(10, 200, n_tests)
+    test_n_glaciers = np.linspace(50, 1000, n_tests, dtype=int)
+    combinations = list(itertools.product(test_mean_periods, test_std_periods, test_n_glaciers))
+
+    np.random.default_rng(0).shuffle(combinations)
+
+    # The frequencies to bin can vary between 0 and 100 (the 100-10000 is for extreme events)
+    frequency_bins = np.r_[np.linspace(0, 100, 300), 10000]
+    synchronization_bins = np.linspace(0, 1, 5)
+    # The years normalized by mean periodicity (0-10 mean periods)
+    years_norm = np.linspace(0, 10, 300)
+
+    def process(combination):
+        mean_period, std_period, n_glaciers = combination        
+        random_phases, periods = generate_test_cases_std(n_glaciers=n_glaciers, n_iters=n_simulations, mean_period=mean_period, std_period=std_period,random_state=int(f"{mean_period:.0f}{std_period:.0f}{n_glaciers}"))
+        # Clip the periodicity to min=10 years because we've never seen anything faster than that
+        periods = np.clip(periods, a_min=10, a_max=None)
+
+        n_surges = count_surges(phases=random_phases, periods=periods, sync_threshold=year_span / 2) / year_span
+
+        if abs(n_surges.mean() - baseline_frequency) > 0.25:
+            return
+
+        # time_arr = np.repeat(years_norm[None, :], periods.size, axis=0).reshape(periods.shape + (years_norm.shape[0],))
+
+        # For all (normalized) years, and sync level, count the amount of surges that occurred.
+        n_surges_arr = np.zeros((years_norm.shape[0], synchronization_bins.shape[0], frequency_bins.shape[0] - 1), dtype=int)
+        for i, sync in enumerate(synchronization_bins):
+            # After filtering to only keep representative baseline frequencies (if clause above), set all phases to 0
+            # This means that all surges will begin on year=0
+
+            phases = random_phases.copy()
+            phases[:int(phases.shape[0] * sync), :] = 0.
+
+            # with warnings.catch_warnings():
+            #     warnings.simplefilter("ignore", category=RuntimeWarning)
+            #     n_surges = count_surges(
+            #         phases=np.repeat(phases[..., None], time_arr.shape[-1], -1),
+            #         periods=np.repeat(phases[..., None], time_arr.shape[-1], -1), 
+            #         sync_threshold=year_span / 2,
+            #         test_year=time_arr,
+            #     )
+
+
+            # n_surges_arr[:, i, :] = np.apply_along_axis(lambda arr: np.histogram(arr, bins=frequency_bins)[0], 0, n_surges) 
+
+            # continue
+
+            # print(n_surges.shape)
+
+            # n_surges_arr[:, i, :] = 
+            for j, year_norm in enumerate(years_norm):
+                n_surges = count_surges(phases=phases, periods=periods, sync_threshold=year_span / 2, test_year=year_norm * mean_period) / year_span
+                n_surges_arr[j, i, :] = np.histogram(n_surges, bins=frequency_bins)[0]
+
+        return n_surges_arr
+
+    # result = []
+    # for combination in tqdm.tqdm(combinations):
+    #     r = process(combination)
+    #     if r is not None:
+    #         result.append(r)
+
+    # return
+
+    result = tqdm.contrib.concurrent.thread_map(process, combinations, max_workers=None)
+    histograms = [l for l in result if l is not None]
+    histogram = np.sum(histograms, axis=0)
+
+    if n_surge_test < 0.:
+        n_surge_test = abs(n_surge_test)
+        frequency_bin_test = frequency_bins[:-1] <= n_surge_test
+        compare_sym = "≤"
+    else:
+        frequency_bin_test = frequency_bins[:-1] >= n_surge_test
+        compare_sym = "≥"
+        
+    n_surge_test *= 10
+    baseline_frequency *= 10
+
+    if n_surge_test == int(n_surge_test):
+        n_surge_test = int(n_surge_test)
+    if baseline_frequency == int(baseline_frequency):
+        baseline_frequency = int(baseline_frequency)
+
+    frequent_surge_likelihood = 100 * histogram[:, :, frequency_bin_test].sum(axis=-1) / np.clip(histogram.sum(axis=-1), a_min=1, a_max=None)
+    sync_step = np.mean(np.diff(synchronization_bins)) / 3
+    min_eval_year = np.argwhere(years_norm >= 1).min()
+    fig = plt.figure(figsize=(8, 5))
+
+    axes = fig.subplots(synchronization_bins.size, sharex=True, sharey=True)
+    for i, sync in enumerate(synchronization_bins):
+        max_loc = min_eval_year + np.argmax(frequent_surge_likelihood[min_eval_year:, [i]])
+
+        # plt.text(years_norm.min() + (years_norm.max() - years_norm.min()) * (max_loc / years_norm.shape[0]), sync + sync_step, f"Max: {frequent_surge_likelihood[max_loc, i]:.2f}%", ha="center", va="bottom") 
+
+        axes[i].plot(years_norm, (np.log10(np.clip(frequent_surge_likelihood[:, i], a_min=1e-3, a_max=None))), color="black")
+        # axes[i].plot(years_norm, np.clip(frequent_surge_likelihood[:, i], a_min=1e-3, a_max=None), color="black")
+        # plt.imshow(np.log10(np.clip(frequent_surge_likelihood[:, [i]].T, a_min=1e-3, a_max=None)), extent=[years_norm.min(), years_norm.max(), sync - sync_step, sync + sync_step], aspect="auto", vmin=-1, vmax=2)
+        # axes[i].set_ylim(synchronization_bins[0] - sync_step, synchronization_bins[-1] + sync_step)
+        # axes[i].set_yticks(np.arange(-3, 3), labels=[10**float(y) for y in np.arange(-3, 3)])
+        # axes[i].set_yscale("log")
+        axes[i].set_ylim(-3, 2)
+        yticks = np.arange(-3, 3)
+        axes[i].set_yticks(yticks, labels=[(round((10 ** float(y))) if y >= 0 else 10 ** float(y)) if y != yticks[0] else "0" for y in yticks])
+        axes[i].grid(alpha=0.3)
+    plt.suptitle(f"Likelihoods of {compare_sym}{n_surge_test} surges in 10 years " + r"for $\overline{F}$= "+f"{baseline_frequency} surges in 10 years")
+    # plt.yticks(synchronization_bins, labels=[f"{s * 100:.0f}%" for s in synchronization_bins])
+    # plt.ylabel()
+    plt.xlabel(r"Time since synchronization (normalized periodicity; T / $\overline{T}$)")
+    plt.tight_layout(h_pad=0.05)
+    for i, sync in enumerate(synchronization_bins):
+        plt.text(0.99, 0.97, f"{sync * 100:.0f}% synchronization", transform=axes[i].transAxes, ha="right", va="top")
+    plt.text(0.01, 0.5, f"Likelihood of {compare_sym}{n_surge_test} surges in 10 years (%)", rotation=90, transform=fig.transFigure, ha="center", va="center")
+    plt.savefig(f"figures/partial_sync_surge_likelihood_{str(baseline_frequency).replace('.', '-')}peryear.jpg", dpi=600)
+    # plt.imshow(frequent_surge_likelihood.T, extent=[years_norm.min(), years_norm.max(), synchronization_bins[-1], synchronization_bins[0]], aspect="auto")
+    if show:
+        plt.show()
+    else:
+        plt.close()
+
+def run_partial_sync_examples():
+    cases = [
+        {"baseline_frequency": 10, "n_surge_test": 20},
+        {"baseline_frequency": 15, "n_surge_test": 30},
+        {"baseline_frequency": 30, "n_surge_test": -10},
+    ]
+
+    for case_args in cases:
+        calculate_partial_synced_phase_concurrence_likelihood(**case_args)
 
 def main(
     n_glaciers: int = 15,
