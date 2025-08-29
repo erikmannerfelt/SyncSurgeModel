@@ -1,0 +1,635 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="148mm"
+   viewBox="0 0 793.70081 559.37006"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
+   sodipodi:docname="surge_sync_model_workflow.svg"
+   inkscape:export-filename="surge_sync_model_workflow.jpg"
+   inkscape:export-xdpi="300"
+   inkscape:export-ydpi="300"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.1819453"
+     inkscape:cx="366.76824"
+     inkscape:cy="277.08558"
+     inkscape:window-width="1868"
+     inkscape:window-height="1163"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="Triangle"
+       refX="2"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Triangle arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         transform="scale(0.5)"
+         style="fill:context-stroke;fill-rule:evenodd;stroke:context-stroke;stroke-width:1pt"
+         d="M 5.77,0 -2.88,5 V -5 Z"
+         id="path135" />
+    </marker>
+    <inkscape:path-effect
+       effect="attach_path"
+       id="path-effect50"
+       is_visible="true"
+       lpeversion="1"
+       startpath="#text6"
+       startposition="18.7"
+       startcurvestart="0,0 , 20,0"
+       startcurveend="0,0 , 20,0"
+       endpath=""
+       endposition="0"
+       endcurvestart="0,0 , 20,0"
+       endcurveend="0,0 , 20,0" />
+    <marker
+       style="overflow:visible"
+       id="ArrowWideHeavy"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Wide, heavy arrow"
+       markerWidth="1"
+       markerHeight="1"
+       viewBox="0 0 1 1"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:context-stroke;fill-rule:evenodd;stroke:none"
+         d="m 1,0 -3,3 h -2 l 3,-3 -3,-3 h 2 z"
+         id="path3" />
+    </marker>
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect17"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,11,0,1 @ F,0,0,1,0,11,0,1 @ F,0,0,1,0,11,0,1 @ F,0,0,1,0,11,0,1"
+       radius="11"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect16"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,11,0,1 @ F,0,0,1,0,11,0,1 @ F,0,0,1,0,11,0,1 @ F,0,0,1,0,11,0,1"
+       radius="11"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect15"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,11,0,1 @ F,0,0,1,0,11,0,1 @ F,0,0,1,0,11,0,1 @ F,0,0,1,0,11,0,1"
+       radius="11"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect14"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,11,0,1 @ F,0,0,1,0,11,0,1 @ F,0,0,1,0,11,0,1 @ F,0,0,1,0,11,0,1"
+       radius="11"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+    <inkscape:path-effect
+       effect="offset"
+       id="path-effect13"
+       is_visible="true"
+       lpeversion="1.3"
+       linejoin_type="miter"
+       unit="mm"
+       offset="2.3"
+       miter_limit="4"
+       attempt_force_join="false"
+       update_on_knot_move="true" />
+    <inkscape:path-effect
+       effect="bounding_box"
+       linkedpath="#text6"
+       id="path-effect12"
+       is_visible="true"
+       lpeversion="1.3"
+       visualbounds="false" />
+    <rect
+       x="272.43223"
+       y="396.80347"
+       width="380.72828"
+       height="198.82477"
+       id="rect11" />
+    <rect
+       x="458.56606"
+       y="375.6519"
+       width="322.34993"
+       height="90.528722"
+       id="rect10" />
+    <rect
+       x="289.35349"
+       y="153.98344"
+       width="119.29486"
+       height="94.759038"
+       id="rect9" />
+    <rect
+       x="374.80584"
+       y="115.91061"
+       width="270.74011"
+       height="332.5027"
+       id="rect6" />
+    <rect
+       x="19.459445"
+       y="20.305508"
+       width="260.58735"
+       height="73.607466"
+       id="rect1" />
+    <inkscape:path-effect
+       effect="bounding_box"
+       linkedpath=""
+       id="path-effect12-9"
+       is_visible="true"
+       lpeversion="1.3"
+       visualbounds="false" />
+    <inkscape:path-effect
+       effect="offset"
+       id="path-effect13-1"
+       is_visible="true"
+       lpeversion="1.3"
+       linejoin_type="miter"
+       unit="mm"
+       offset="2.3"
+       miter_limit="4"
+       attempt_force_join="false"
+       update_on_knot_move="true" />
+    <inkscape:path-effect
+       effect="bounding_box"
+       linkedpath="#text11"
+       id="path-effect12-97"
+       is_visible="true"
+       lpeversion="1.3"
+       visualbounds="false" />
+    <inkscape:path-effect
+       effect="offset"
+       id="path-effect13-7"
+       is_visible="true"
+       lpeversion="1.3"
+       linejoin_type="miter"
+       unit="mm"
+       offset="2.3"
+       miter_limit="4"
+       attempt_force_join="false"
+       update_on_knot_move="true" />
+    <inkscape:path-effect
+       effect="bounding_box"
+       linkedpath="#text2"
+       id="path-effect12-6"
+       is_visible="true"
+       lpeversion="1.3"
+       visualbounds="false" />
+    <inkscape:path-effect
+       effect="offset"
+       id="path-effect13-3"
+       is_visible="true"
+       lpeversion="1.3"
+       linejoin_type="miter"
+       unit="mm"
+       offset="2.3"
+       miter_limit="4"
+       attempt_force_join="false"
+       update_on_knot_move="true" />
+    <inkscape:path-effect
+       effect="bounding_box"
+       linkedpath="#text1"
+       id="path-effect12-93"
+       is_visible="true"
+       lpeversion="1.3"
+       visualbounds="false" />
+    <inkscape:path-effect
+       effect="offset"
+       id="path-effect13-9"
+       is_visible="true"
+       lpeversion="1.3"
+       linejoin_type="miter"
+       unit="mm"
+       offset="2.3"
+       miter_limit="4"
+       attempt_force_join="false"
+       update_on_knot_move="true" />
+    <inkscape:path-effect
+       effect="bounding_box"
+       linkedpath="#text9"
+       id="path-effect12-6-7"
+       is_visible="true"
+       lpeversion="1.3"
+       visualbounds="false" />
+    <inkscape:path-effect
+       effect="offset"
+       id="path-effect13-3-4"
+       is_visible="true"
+       lpeversion="1.3"
+       linejoin_type="miter"
+       unit="mm"
+       offset="2.3"
+       miter_limit="4"
+       attempt_force_join="false"
+       update_on_knot_move="true" />
+    <inkscape:path-effect
+       effect="fillet_chamfer"
+       id="path-effect16-1"
+       is_visible="true"
+       lpeversion="1"
+       nodesatellites_param="F,0,0,1,0,11,0,1 @ F,0,0,1,0,11,0,1 @ F,0,0,1,0,11,0,1 @ F,0,0,1,0,11,0,1"
+       radius="11"
+       unit="px"
+       method="auto"
+       mode="F"
+       chamfer_steps="1"
+       flexible="false"
+       use_knot_distance="true"
+       apply_no_radius="true"
+       apply_with_radius="true"
+       only_selected="false"
+       hide_knots="false" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <path
+       style="font-variation-settings:normal;opacity:1;fill:none;fill-opacity:1;stroke:#76c7e4;stroke-width:2.35465;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:1.2;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker-mid:url(#ArrowWideHeavy)"
+       d="M 565.16998,294.42986 C 478.87157,296.96804 408.50735,248.74379 407.80229,166.67437 407.10449,85.450647 477.17944,44.303198 557.80321,44.798804"
+       id="path50"
+       sodipodi:nodetypes="csc" />
+    <path
+       style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#f5ecdb;fill-opacity:1;stroke:#76c7e4;stroke-width:2.35465;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:1.2;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+       id="rect12"
+       width="100.68148"
+       height="85.452347"
+       x="348.57788"
+       y="32.996452"
+       inkscape:path-effect="#path-effect12;#path-effect13;#path-effect15"
+       sodipodi:type="rect"
+       d="M 504.86719,52.503906 V 283.79102 a 11,11 45 0 0 11,11 l 248.25781,0 a 11,11 135 0 0 11,-11 V 52.503906 a 11,11 45 0 0 -11,-11 H 515.86719 a 11,11 135 0 0 -11,11 z" />
+    <path
+       style="fill:#f5ecdb;fill-opacity:1;stroke:#76c7e4;stroke-width:2.35465;stroke-linejoin:round;stroke-miterlimit:1.2;stroke-dasharray:none;stroke-opacity:1"
+       id="rect12-3"
+       width="100.68148"
+       height="85.452347"
+       x="348.57788"
+       y="32.996452"
+       inkscape:path-effect="#path-effect12-97;#path-effect13-7;#path-effect14"
+       sodipodi:type="rect"
+       d="m 363.32031,-37.5 v 150.30078 a 11,11 45 0 0 11,11 h 341.37891 a 11,11 135 0 0 11,-11 V -37.5 a 11,11 45 0 0 -11,-11 H 374.32031 a 11,11 135 0 0 -11,11 z"
+       transform="translate(-306.53702,397.0648)" />
+    <path
+       style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#f5ecdb;fill-opacity:1;stroke:#76c7e4;stroke-width:2.35465;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:1.2;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+       id="rect12-8"
+       width="100.68148"
+       height="85.452347"
+       x="348.57788"
+       y="32.996452"
+       sodipodi:type="rect"
+       transform="translate(-330.75822,206.79215)"
+       d="m 390.86328,-54.742187 v 91.958984 a 11,11 45 0 0 11,11 l 126.84766,0 a 11,11 135 0 0 11,-11 v -91.958984 a 11,11 45 0 0 -11,-11 H 401.86328 a 11,11 135 0 0 -11,11 z"
+       inkscape:path-effect="#path-effect12-6;#path-effect13-3;#path-effect16" />
+    <path
+       style="font-variation-settings:normal;fill:#f5ecdb;fill-opacity:1;stroke:#76c7e4;stroke-width:2.35464568;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:1.2;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000"
+       id="rect12-8-9"
+       width="100.68148"
+       height="85.452347"
+       x="348.57788"
+       y="32.996452"
+       sodipodi:type="rect"
+       transform="translate(-84.68595,214.91951)"
+       d="m 366.31055,-60.541016 v 48.142579 a 11,11 45 0 0 11,10.9999995 h 95.14648 a 11,11 135 0 0 11,-11.0000005 v -48.142578 a 11,11 45 0 0 -11,-11 h -95.14648 a 11,11 135 0 0 -11,11 z"
+       inkscape:path-effect="#path-effect12-6-7;#path-effect13-3-4;#path-effect16-1" />
+    <path
+       style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:#dbddf5;fill-opacity:1;stroke:#76c7e4;stroke-width:2.35465;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:1.2;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+       id="rect12-85"
+       width="100.68148"
+       height="85.452347"
+       x="348.57788"
+       y="32.996452"
+       inkscape:path-effect="#path-effect12-93;#path-effect13-9;#path-effect17"
+       sodipodi:type="rect"
+       d="m 271.82031,45.640625 v 59.453125 a 11,11 45 0 0 11,11 h 253.33008 a 11,11 135 0 0 11,-11 V 45.640625 a 11,11 45 0 0 -11,-11 H 282.82031 a 11,11 135 0 0 -11,11 z"
+       transform="translate(-257.14484,-19.74131)" />
+    <text
+       xml:space="preserve"
+       id="text1"
+       style="font-size:18.6667px;line-height:normal;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans, Normal';text-align:center;text-decoration-color:#000000;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect1);display:inline;fill:#ffffff;stroke-width:2.35465;stroke-linejoin:round;stroke-miterlimit:1.2"
+       transform="translate(2.5381881)"><tspan
+         x="39.785283"
+         y="37.1188"
+         id="tspan13"><tspan
+           style="fill:#000000"
+           id="tspan12">Question: Is more or fewer </tspan></tspan><tspan
+         x="43.914197"
+         y="60.452174"
+         id="tspan51"><tspan
+           style="fill:#000000"
+           id="tspan14">than </tspan><tspan
+           style="font-weight:bold"
+           id="tspan15">X</tspan><tspan
+           style="fill:#000000"
+           id="tspan16"> surges in 10 years </tspan></tspan><tspan
+         x="20.038503"
+         y="83.785548"
+         id="tspan55"><tspan
+           style="fill:#000000"
+           id="tspan52">explainable for a baseline of </tspan><tspan
+           style="font-weight:bold"
+           id="tspan53">F̅</tspan><tspan
+           style="fill:#000000"
+           id="tspan54">?</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans, Normal';text-align:center;text-decoration-color:#000000;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.35465;stroke-linejoin:round;stroke-miterlimit:1.2;stroke-opacity:1"
+       x="159.05981"
+       y="148.90706"
+       id="text2"
+       transform="translate(-22.843697,11.84488)"><tspan
+         sodipodi:role="line"
+         id="tspan2"
+         x="159.05981"
+         y="148.90706"><tspan
+   style="font-weight:bold;font-size:16px"
+   id="tspan17">Parameter space</tspan>: </tspan><tspan
+         sodipodi:role="line"
+         x="159.05981"
+         y="168.90706"
+         id="tspan3"><tspan
+   style="font-weight:bold;font-size:16px"
+   id="tspan18">μ</tspan>∈[50,300] yrs</tspan><tspan
+         sodipodi:role="line"
+         x="159.05981"
+         y="189.65514"
+         id="tspan4"><tspan
+   style="font-weight:bold;font-size:16px"
+   id="tspan19">σ</tspan>∈[10,200] yrs</tspan><tspan
+         sodipodi:role="line"
+         x="159.05981"
+         y="210.4032"
+         id="tspan5"><tspan
+   style="font-weight:bold;font-size:16px"
+   id="tspan20">n</tspan>∈[50,1000]</tspan><tspan
+         sodipodi:role="line"
+         x="159.05981"
+         y="231.15128"
+         id="tspan6"><tspan
+   style="font-weight:bold;font-size:16px"
+   id="tspan21">S</tspan>∈[0, 100] %</tspan></text>
+    <text
+       xml:space="preserve"
+       id="text6"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans, Normal';text-align:start;text-decoration-color:#000000;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect6);shape-padding:1.69213;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.35465;stroke-linejoin:round;stroke-miterlimit:1.2;stroke-opacity:1"
+       transform="translate(137.06218,-70.223212)"
+       x="-172.09276"
+       y="0"><tspan
+         x="376.49805"
+         y="132.01363"
+         id="tspan57">1. For each glacier (<tspan
+   style="font-weight:bold"
+   id="tspan56">n</tspan>):
+</tspan><tspan
+         x="376.49805"
+         y="152.0525"
+         id="tspan63">- <tspan
+   style="font-weight:bold"
+   id="tspan58">T</tspan> ~ <tspan
+   style="font-style:italic"
+   id="tspan59">N</tspan>(<tspan
+   style="font-weight:bold"
+   id="tspan60">μ</tspan>,<tspan
+   style="font-weight:bold"
+   id="tspan61">σ</tspan>) and <tspan
+   style="font-weight:bold"
+   id="tspan62">T</tspan> ≥ 10 yr
+</tspan><tspan
+         x="376.49805"
+         y="172.0525"
+         id="tspan67">- <tspan
+   style="font-weight:bold"
+   id="tspan64">θ</tspan> ∼ U(0,<tspan
+   style="font-weight:bold"
+   id="tspan65">T</tspan>), with a probability (<tspan
+   style="font-weight:bold"
+   id="tspan66">S</tspan>) of </tspan><tspan
+         x="376.49805"
+         y="193.00075"
+         id="tspan69"><tspan
+   style="font-weight:bold"
+   id="tspan68">θ</tspan>=0.
+</tspan><tspan
+         x="376.49805"
+         y="213.00075"
+         id="tspan71">- For each timestep (<tspan
+   style="font-weight:bold"
+   id="tspan70">t</tspan>), test if 
+</tspan><tspan
+         x="376.49805"
+         y="233.00075"
+         id="tspan76">Surge(<tspan
+   style="font-weight:bold"
+   id="tspan72">t</tspan>) = ((<tspan
+   style="font-weight:bold"
+   id="tspan73">t</tspan>−<tspan
+   style="font-weight:bold"
+   id="tspan74">θ</tspan>) mod <tspan
+   style="font-weight:bold"
+   id="tspan75">T</tspan>) &lt; 10
+</tspan><tspan
+         x="376.49805"
+         y="253.00075"
+         id="tspan77">
+</tspan><tspan
+         x="376.49805"
+         y="273.00075"
+         id="tspan79">2. For each <tspan
+   style="font-weight:bold"
+   id="tspan78">t</tspan>, calculate the total </tspan><tspan
+         x="376.49805"
+         y="293.00075"
+         id="tspan82">surge frequency <tspan
+   style="font-weight:bold"
+   id="tspan80">F</tspan>(<tspan
+   style="font-weight:bold"
+   id="tspan81">t</tspan>)
+</tspan><tspan
+         x="376.49805"
+         y="313.00075"
+         id="tspan83">
+</tspan><tspan
+         x="376.49805"
+         y="333.00075"
+         id="tspan84">3. Keep only the simulations where </tspan><tspan
+         x="376.49805"
+         y="353.00075"
+         id="tspan88">the time-averaged <tspan
+   style="font-weight:bold"
+   id="tspan85">F</tspan> ≈ <tspan
+   style="font-weight:bold"
+   id="tspan86">F̅</tspan> for <tspan
+   style="font-weight:bold"
+   id="tspan87">S</tspan>=0%</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:16.0000001px;line-height:normal;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans, Normal';text-align:center;text-decoration-color:#000000;writing-mode:lr-tb;direction:ltr;text-anchor:middle;white-space:pre;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.35465;stroke-linejoin:round;stroke-miterlimit:1.2;stroke-opacity:1"
+       x="571.93848"
+       y="168.3665"
+       id="text8"><tspan
+         sodipodi:role="line"
+         id="tspan8"></tspan></text>
+    <text
+       xml:space="preserve"
+       id="text11"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans, Normal';text-align:start;text-decoration-color:#000000;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect11);display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.35465;stroke-linejoin:round;stroke-miterlimit:1.2;stroke-opacity:1"
+       transform="translate(-206.95557,-42.363269)"><tspan
+         x="272.43164"
+         y="411.21481"
+         id="tspan89">Calculate the exceedence probabilities within the </tspan><tspan
+         x="272.43164"
+         y="431.21481"
+         id="tspan90">entire feature space for:
+</tspan><tspan
+         x="272.43164"
+         y="451.21481"
+         id="tspan91">
+</tspan><tspan
+         x="272.43164"
+         y="471.21481"
+         id="tspan94">- <tspan
+   style="font-weight:bold"
+   id="tspan92">F̅</tspan> = 15, <tspan
+   style="font-weight:bold"
+   id="tspan93">X</tspan> ≥ 30 [surges per 10 years]
+</tspan><tspan
+         x="272.43164"
+         y="491.21481"
+         id="tspan97">- <tspan
+   style="font-weight:bold"
+   id="tspan95">F̅</tspan> = 20, <tspan
+   style="font-weight:bold"
+   id="tspan96">X</tspan> ≥ 30
+</tspan><tspan
+         x="272.43164"
+         y="511.21481"
+         id="tspan100">- <tspan
+   style="font-weight:bold"
+   id="tspan98">F</tspan> = 30, <tspan
+   style="font-weight:bold"
+   id="tspan99">X</tspan> ≤ 10
+</tspan><tspan
+         x="272.43164"
+         y="531.21481"
+         id="tspan101">
+</tspan><tspan
+         x="272.43164"
+         y="551.21481"
+         id="tspan103">at different levels of synchronization (<tspan
+   style="font-weight:bold"
+   id="tspan102">S</tspan>).</tspan></text>
+    <text
+       xml:space="preserve"
+       id="text9"
+       style="font-size:16px;line-height:normal;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans, Normal';text-align:center;text-decoration-color:#000000;writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect9);display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2.35465;stroke-linejoin:round;stroke-miterlimit:1.2;stroke-opacity:1"
+       transform="translate(-9.3066896,-4.2303145)"><tspan
+         x="298.61696"
+         y="168.54238"
+         id="tspan105"><tspan
+           style="font-family:Sans;-inkscape-font-specification:'Sans, Normal'"
+           id="tspan104">5000 runs for </tspan></tspan><tspan
+         x="331.21698"
+         y="188.68831"
+         id="tspan107"><tspan
+           style="font-family:Sans;-inkscape-font-specification:'Sans, Normal'"
+           id="tspan106">each </tspan></tspan><tspan
+         x="299.545"
+         y="208.83425"
+         id="tspan109"><tspan
+           style="font-family:Sans;-inkscape-font-specification:'Sans, Normal'"
+           id="tspan108">combination: </tspan></tspan></text>
+    <path
+       style="display:inline;fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1.75748;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Triangle)"
+       d="m 141.29249,94.759038 -3.03178,46.290922"
+       id="path51"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-end="#rect12-8" />
+    <path
+       style="font-variation-settings:normal;opacity:1;vector-effect:none;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.75748;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;marker-end:url(#Triangle);stop-color:#000000;stop-opacity:1"
+       d="m 208.95272,190.94431 72.67188,-6.91836"
+       id="path52"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-start="#rect12-8"
+       inkscape:connection-end="#rect12-8-9" />
+    <path
+       style="font-variation-settings:normal;display:inline;opacity:1;vector-effect:none;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.75748;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;marker-end:url(#Triangle);stop-color:#000000;stop-opacity:1"
+       d="M 643.85382,293.58381 420.1622,371.46092"
+       id="path53"
+       inkscape:connector-type="polyline"
+       inkscape:connector-curvature="0"
+       inkscape:connection-end="#rect12-3" />
+  </g>
+</svg>

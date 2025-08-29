@@ -274,13 +274,17 @@ def calculate_synced_phase_concurrence_likelihood(baseline_frequency: float = 1.
 
 
 
-def calculate_partial_synced_phase_concurrence_likelihood(baseline_frequency: float = 15, year_span: float = 10., n_tests: int = 15, n_simulations: int = 5000, n_surge_test: float = 30, show: bool = False):
+def calculate_partial_synced_phase_concurrence_likelihood(baseline_frequency: float = 15, year_span: float = 10., n_tests: int = 15, n_simulations: int = 5000, n_surge_tests: float | list[float] = 30, show: bool = False):
     
     import tqdm
     import tqdm.contrib.concurrent
 
-    baseline_frequency = baseline_frequency / 10
-    n_surge_test = n_surge_test / 10
+    if not isinstance(n_surge_tests, Iterable):
+        n_surge_tests = [n_surge_tests]
+
+    baseline_frequency /= 10
+    for i in range(len(n_surge_tests)):
+        n_surge_tests[i] /= 10
 
     # Generate all combinations of the test cases below
     test_mean_periods = np.linspace(50, 300, n_tests)
@@ -353,67 +357,71 @@ def calculate_partial_synced_phase_concurrence_likelihood(baseline_frequency: fl
     histograms = [l for l in result if l is not None]
     histogram = np.sum(histograms, axis=0)
 
-    if n_surge_test < 0.:
-        n_surge_test = abs(n_surge_test)
-        frequency_bin_test = frequency_bins[:-1] <= n_surge_test
-        compare_sym = "≤"
-    else:
-        frequency_bin_test = frequency_bins[:-1] >= n_surge_test
-        compare_sym = "≥"
-        
-    n_surge_test *= 10
     baseline_frequency *= 10
 
-    if n_surge_test == int(n_surge_test):
-        n_surge_test = int(n_surge_test)
-    if baseline_frequency == int(baseline_frequency):
-        baseline_frequency = int(baseline_frequency)
+    for n_surge_test in n_surge_tests:
+        if n_surge_test < 0.:
+            n_surge_test = abs(n_surge_test)
+            frequency_bin_test = frequency_bins[:-1] <= n_surge_test
+            compare_sym = "≤"
+            cmp_sym_ascii = "lt"
+        else:
+            frequency_bin_test = frequency_bins[:-1] >= n_surge_test
+            compare_sym = "≥"
+            cmp_sym_ascii = "gt"
+        
+        n_surge_test *= 10
 
-    frequent_surge_likelihood = 100 * histogram[:, :, frequency_bin_test].sum(axis=-1) / np.clip(histogram.sum(axis=-1), a_min=1, a_max=None)
-    sync_step = np.mean(np.diff(synchronization_bins)) / 3
-    min_eval_year = np.argwhere(years_norm >= 1).min()
-    fig = plt.figure(figsize=(8, 5))
+        if n_surge_test == int(n_surge_test):
+            n_surge_test = int(n_surge_test)
+        if baseline_frequency == int(baseline_frequency):
+            baseline_frequency = int(baseline_frequency)
 
-    axes = fig.subplots(synchronization_bins.size, sharex=True, sharey=True)
-    for i, sync in enumerate(synchronization_bins):
-        max_loc = min_eval_year + np.argmax(frequent_surge_likelihood[min_eval_year:, [i]])
+        frequent_surge_likelihood = 100 * histogram[:, :, frequency_bin_test].sum(axis=-1) / np.clip(histogram.sum(axis=-1), a_min=1, a_max=None)
+        sync_step = np.mean(np.diff(synchronization_bins)) / 3
+        min_eval_year = np.argwhere(years_norm >= 1).min()
+        fig = plt.figure(figsize=(8, 5))
 
-        # plt.text(years_norm.min() + (years_norm.max() - years_norm.min()) * (max_loc / years_norm.shape[0]), sync + sync_step, f"Max: {frequent_surge_likelihood[max_loc, i]:.2f}%", ha="center", va="bottom") 
+        axes = fig.subplots(synchronization_bins.size, sharex=True, sharey=True)
+        for i, sync in enumerate(synchronization_bins):
+            max_loc = min_eval_year + np.argmax(frequent_surge_likelihood[min_eval_year:, [i]])
 
-        axes[i].plot(years_norm, (np.log10(np.clip(frequent_surge_likelihood[:, i], a_min=1e-3, a_max=None))), color="black")
-        # axes[i].plot(years_norm, np.clip(frequent_surge_likelihood[:, i], a_min=1e-3, a_max=None), color="black")
-        # plt.imshow(np.log10(np.clip(frequent_surge_likelihood[:, [i]].T, a_min=1e-3, a_max=None)), extent=[years_norm.min(), years_norm.max(), sync - sync_step, sync + sync_step], aspect="auto", vmin=-1, vmax=2)
-        # axes[i].set_ylim(synchronization_bins[0] - sync_step, synchronization_bins[-1] + sync_step)
-        # axes[i].set_yticks(np.arange(-3, 3), labels=[10**float(y) for y in np.arange(-3, 3)])
-        # axes[i].set_yscale("log")
-        axes[i].set_ylim(-3, 2)
-        yticks = np.arange(-3, 3)
-        axes[i].set_yticks(yticks, labels=[(round((10 ** float(y))) if y >= 0 else 10 ** float(y)) if y != yticks[0] else "0" for y in yticks])
-        axes[i].grid(alpha=0.3)
-    plt.suptitle(f"Likelihoods of {compare_sym}{n_surge_test} surges in 10 years " + r"for $\overline{F}$= "+f"{baseline_frequency} surges in 10 years")
-    # plt.yticks(synchronization_bins, labels=[f"{s * 100:.0f}%" for s in synchronization_bins])
-    # plt.ylabel()
-    plt.xlabel(r"Time since synchronization (normalized periodicity; T / $\overline{T}$)")
-    plt.tight_layout(h_pad=0.05)
-    for i, sync in enumerate(synchronization_bins):
-        plt.text(0.99, 0.97, f"{sync * 100:.0f}% synchronization", transform=axes[i].transAxes, ha="right", va="top")
-    plt.text(0.01, 0.5, f"Likelihood of {compare_sym}{n_surge_test} surges in 10 years (%)", rotation=90, transform=fig.transFigure, ha="center", va="center")
-    plt.savefig(f"figures/partial_sync_surge_likelihood_{str(baseline_frequency).replace('.', '-')}peryear.jpg", dpi=600)
-    # plt.imshow(frequent_surge_likelihood.T, extent=[years_norm.min(), years_norm.max(), synchronization_bins[-1], synchronization_bins[0]], aspect="auto")
-    if show:
-        plt.show()
-    else:
-        plt.close()
+            # plt.text(years_norm.min() + (years_norm.max() - years_norm.min()) * (max_loc / years_norm.shape[0]), sync + sync_step, f"Max: {frequent_surge_likelihood[max_loc, i]:.2f}%", ha="center", va="bottom") 
 
-def run_partial_sync_examples():
+            axes[i].plot(years_norm, (np.log10(np.clip(frequent_surge_likelihood[:, i], a_min=1e-3, a_max=None))), color="black")
+            # axes[i].plot(years_norm, np.clip(frequent_surge_likelihood[:, i], a_min=1e-3, a_max=None), color="black")
+            # plt.imshow(np.log10(np.clip(frequent_surge_likelihood[:, [i]].T, a_min=1e-3, a_max=None)), extent=[years_norm.min(), years_norm.max(), sync - sync_step, sync + sync_step], aspect="auto", vmin=-1, vmax=2)
+            # axes[i].set_ylim(synchronization_bins[0] - sync_step, synchronization_bins[-1] + sync_step)
+            # axes[i].set_yticks(np.arange(-3, 3), labels=[10**float(y) for y in np.arange(-3, 3)])
+            # axes[i].set_yscale("log")
+            axes[i].set_ylim(-3, 2)
+            yticks = np.arange(-3, 3)
+            axes[i].set_yticks(yticks, labels=[(round((10 ** float(y))) if y >= 0 else 10 ** float(y)) if y != yticks[0] else "0" for y in yticks])
+            axes[i].grid(alpha=0.3)
+        plt.suptitle(f"Likelihoods of {compare_sym}{n_surge_test} surges in 10 years " + r"for $\overline{F}$= "+f"{baseline_frequency} surges in 10 years")
+        # plt.yticks(synchronization_bins, labels=[f"{s * 100:.0f}%" for s in synchronization_bins])
+        # plt.ylabel()
+        plt.xlabel(r"Time since synchronization (normalized periodicity; T / $\overline{T}$)")
+        plt.tight_layout(h_pad=0.05)
+        for i, sync in enumerate(synchronization_bins):
+            plt.text(0.99, 0.97, f"{sync * 100:.0f}% synchronization", transform=axes[i].transAxes, ha="right", va="top")
+        plt.text(0.01, 0.5, f"Likelihood of {compare_sym}{n_surge_test} surges in 10 years (%)", rotation=90, transform=fig.transFigure, ha="center", va="center")
+        plt.savefig(f"figures/partial_sync_surge_likelihood_B{str(baseline_frequency).replace('.', '-')}_T{cmp_sym_ascii}{str(n_surge_test).replace('.', '-')}.jpg", dpi=600)
+        # plt.imshow(frequent_surge_likelihood.T, extent=[years_norm.min(), years_norm.max(), synchronization_bins[-1], synchronization_bins[0]], aspect="auto")
+        if show:
+            plt.show()
+        else:
+            plt.close()
+
+def run_partial_sync_examples(**kwargs):
     cases = [
-        {"baseline_frequency": 10, "n_surge_test": 20},
-        {"baseline_frequency": 15, "n_surge_test": 30},
-        {"baseline_frequency": 30, "n_surge_test": -10},
+        {"baseline_frequency": 10, "n_surge_tests": 20},
+        {"baseline_frequency": 15, "n_surge_tests": 30},
+        {"baseline_frequency": 30, "n_surge_tests": -10},
+        {"baseline_frequency": 20, "n_surge_tests": [-10, 20, 30]},
     ]
-
     for case_args in cases:
-        calculate_partial_synced_phase_concurrence_likelihood(**case_args)
+        calculate_partial_synced_phase_concurrence_likelihood(**case_args, **kwargs)
 
 def main(
     n_glaciers: int = 15,
