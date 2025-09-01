@@ -139,7 +139,7 @@ def count_surges(phases: np.ndarray, periods: np.ndarray, sync_threshold: float,
     return n_surges
 
 
-def calculate_random_phase_concurrence_likelihood(baseline_frequencies: float | list[float] = 3., year_span: float = 10., n_tests: int = 15, n_simulations: int = 500):
+def calculate_random_phase_concurrence_likelihood(baseline_frequencies: float | list[float] = [1., 1.5, 2., 2.5, 3.], year_span: float = 10., n_tests: int = 15, n_simulations: int = 500):
     import tqdm
     import tqdm.contrib.concurrent
 
@@ -178,15 +178,19 @@ def calculate_random_phase_concurrence_likelihood(baseline_frequencies: float | 
         bin_centers = (frequency_bins[:-1] + frequency_bins[1:]) / 2
         cumul_hist = np.cumsum(histogram)
 
-        plt.plot(bin_centers[1:][np.diff(cumul_hist) > 0], cumul_hist[1:][np.diff(cumul_hist) > 0], label=r"$\overline{F}$ = " + f"{baseline_frequency} / yr")
+        baseline_frequency *= 10
+        if int(baseline_frequency) == baseline_frequency:
+            baseline_frequency = int(baseline_frequency)
+
+        plt.plot(bin_centers[1:][np.diff(cumul_hist) > 0] * 10, cumul_hist[1:][np.diff(cumul_hist) > 0], label=r"$\overline{F}$ = " + f"{baseline_frequency} / decade")
     plt.grid(alpha=0.3)
 
-    plt.title("Probabilities of random phase surge concurrence")
-    plt.xlabel(f"Momentary frequency (F; surges / yr)")
-    plt.ylabel("Cumulative likelihood (%)")
+    # plt.title("Probabilities of random phase surge concurrence")
+    plt.xlabel(f"Momentary frequency (F; surges / decade)")
+    plt.ylabel("Cumulative probability (%)")
     plt.legend()
     plt.tight_layout()
-    plt.savefig("figures/random_surge_likelihoods.jpg", dpi=600)
+    plt.savefig("figures/random_surge_probabilities.jpg", dpi=600)
     plt.show()
     return
 
@@ -263,9 +267,9 @@ def calculate_synced_phase_concurrence_likelihood(baseline_frequency: float = 1.
 
     plt.legend()
     plt.ylim(0, 100)
-    plt.title(r"Likelihoods of synchonization for $\overline{F}$= "+f"{baseline_frequency} surges / year")
+    # plt.title(r"Likelihoods of synchonization for $\overline{F}$= "+f"{baseline_frequency} surges / year")
     plt.xlabel(r"Time since synchronization (normalized periodicity; T / $\overline{T}$)")
-    plt.ylabel("Synchronization likelihood (%)")
+    plt.ylabel("Synchronization probability (%)")
 
     plt.tight_layout()
     plt.savefig(f"figures/synchronized_surge_likelihood_{str(baseline_frequency).replace('.', '-')}peryear.jpg", dpi=600)
@@ -274,7 +278,7 @@ def calculate_synced_phase_concurrence_likelihood(baseline_frequency: float = 1.
 
 
 
-def calculate_partial_synced_phase_concurrence_likelihood(baseline_frequency: float = 15, year_span: float = 10., n_tests: int = 30, n_simulations: int = 5000, n_surge_tests: float | list[float] = 30, show: bool = False):
+def calculate_partial_synced_phase_concurrence_likelihood(baseline_frequency: float = 15, year_span: float = 10., n_tests: int = 10, n_simulations: int = 5000, n_surge_tests: float | list[float] = 30, show: bool = False, title: bool = False):
     
     import tqdm
     import tqdm.contrib.concurrent
@@ -398,15 +402,17 @@ def calculate_partial_synced_phase_concurrence_likelihood(baseline_frequency: fl
             yticks = np.arange(-3, 3)
             axes[i].set_yticks(yticks, labels=[(round((10 ** float(y))) if y >= 0 else 10 ** float(y)) if y != yticks[0] else "0" for y in yticks])
             axes[i].grid(alpha=0.3)
-        plt.suptitle(f"Likelihoods of {compare_sym}{n_surge_test} surges in 10 years " + r"for $\overline{F}$= "+f"{baseline_frequency} surges in 10 years")
+
+        if title:
+            plt.suptitle(f"Probabilities of {compare_sym}{n_surge_test} surges in 10 years " + r"for $\overline{F}$= "+f"{baseline_frequency} surges in 10 years")
         # plt.yticks(synchronization_bins, labels=[f"{s * 100:.0f}%" for s in synchronization_bins])
         # plt.ylabel()
         plt.xlabel(r"Time since synchronization (normalized periodicity; T / $\overline{T}$)")
         plt.tight_layout(h_pad=0.05)
         for i, sync in enumerate(synchronization_bins):
             plt.text(0.99, 0.97, f"{sync * 100:.0f}% synchronization", transform=axes[i].transAxes, ha="right", va="top")
-        plt.text(0.01, 0.5, f"Likelihood of {compare_sym}{n_surge_test} surges in 10 years (%)", rotation=90, transform=fig.transFigure, ha="center", va="center")
-        plt.savefig(f"figures/partial_sync_surge_likelihood_B{str(baseline_frequency).replace('.', '-')}_T{cmp_sym_ascii}{str(n_surge_test).replace('.', '-')}.jpg", dpi=600)
+        plt.text(0.01, 0.5, f"Probability of {compare_sym}{n_surge_test} surges / decade (%)", rotation=90, transform=fig.transFigure, ha="center", va="center")
+        plt.savefig(f"figures/partial_sync_surge_probability_B{str(baseline_frequency).replace('.', '-')}_T{cmp_sym_ascii}{str(n_surge_test).replace('.', '-')}.jpg", dpi=600)
         # plt.imshow(frequent_surge_likelihood.T, extent=[years_norm.min(), years_norm.max(), synchronization_bins[-1], synchronization_bins[0]], aspect="auto")
         if show:
             plt.show()
