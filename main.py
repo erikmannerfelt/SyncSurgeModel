@@ -274,7 +274,7 @@ def calculate_synced_phase_concurrence_likelihood(baseline_frequency: float = 1.
 
 
 
-def calculate_partial_synced_phase_concurrence_likelihood(baseline_frequency: float = 15, year_span: float = 10., n_tests: int = 15, n_simulations: int = 5000, n_surge_tests: float | list[float] = 30, show: bool = False):
+def calculate_partial_synced_phase_concurrence_likelihood(baseline_frequency: float = 15, year_span: float = 10., n_tests: int = 30, n_simulations: int = 5000, n_surge_tests: float | list[float] = 30, show: bool = False):
     
     import tqdm
     import tqdm.contrib.concurrent
